@@ -2,7 +2,7 @@
 Avaliação das sexta e sétima sprints do programa de bolsas Compass UOL para formação em machine learning para AWS.
 ## Execução (Código Fonte)
 
-Com base nas atividades anteriores realizadas, crie uma página html que irá capturar uma frase qualquer inserida pelo usuário e transformará essa frase em um audio em mp3 via polly.
+Crie uma API que irá capturar uma frase qualquer inserida pelo usuário e transformará essa frase em um audio em mp3 via polly.
 
 **Especificações**:
 
@@ -100,8 +100,6 @@ functions:
 3. Status code para sucesso da requisição será `200`
 
 
-```
-
 ***
 
 Após conseguir rodar o projeto base o objetivo final será divida em duas partes:
@@ -119,8 +117,8 @@ Deverá ser criada a rota `/v1/tts` que receberá um post no formato abaixo:
 ```
 
 - Deverá utilizar a lógica do hash para verificar se a frase já foi gerada anteriormente.
-- Caso o hash já exista no dynamo entregue o retorno conforme abaixo.
-- Caso não exista faça a geração do audio, grave no s3 e grave as referencias no dynamo conforme Parte 2
+- Caso o hash já exista no dynamo entregue o retorno conforme abaixo em _unique_id_;
+- Caso não exista faça a geração do audio, grave no s3 e grave as referencias no dynamo conforme Parte 2.
 
 Resposta a ser entregue:
 
@@ -160,7 +158,7 @@ Com base na [Documentação Amazon Lex](https://compasso-my.sharepoint.com/:f:/g
     - O chatbot deve captar ao menos 3 slots no decorrer do fluxo;
 - O chatbot deve utilizar-se de menu com botões (Response Cards);
 - Tratamento de erros (fallback);
-- Deve ter a opção de receber um áudio e transformá-lo para texto, com uso da API da Parte 1 deste trabalho;
+- Deve ter a opção de responder em áudio, transformando-o para texto, com uso da API da Parte 1 deste trabalho;
 - (Opcional) Uso de conditional branching para controle de fluxos ([Doc Conditional Branching](https://docs.aws.amazon.com/pt_br/lexv2/latest/dg/paths-branching.html));
 ***
 
@@ -171,7 +169,7 @@ Com base na [Documentação Amazon Lex](https://compasso-my.sharepoint.com/:f:/g
 - Infra-estrutura como codigo;
 - Seguir as atividades na ordem proposta;
 - Sobre as rotas:
-  - Possuir em cada rota os retornos esperados (somente campos solicitados conforme especificação)
+  - Possuir a rota com o retorno esperado (somente campos solicitados conforme especificação);
 - Entendimento do chatbot e o que ele soluciona;
 - Criatividade em relação ao tema escolhido para o desenvolvimento do chatbot;
 - Intents e slots criados e informações que eles se dispõem a obter;
