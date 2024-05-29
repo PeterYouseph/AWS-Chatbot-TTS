@@ -116,12 +116,12 @@ Deverá ser criada a rota `/v1/tts` que receberá um post no formato abaixo:
   }
 ```
 
-- Deverá ser criada uma lógica para que essa frase recebida seja um id unico (um hash code);
-- Esse hash será o atributo chave em nosso dynamoDB - exemplo: "Teste 123" será sempre o id "123456";
-- Com essa frase recebida deverá ser transformada em áudio via AWS Polly;
-- Deverá ser armazenada em um S3 (que deverá ser público, apenas para a nossa avaliação);
+- Deverá ser criada uma lógica para que a frase recebida seja um id único (um _hash code_);
+- Esse hash será o atributo chave em nosso DynamoDB - exemplo: "Teste 123" será sempre o id "123456";
+- O texto da frase recebida deverá ser transformado em áudio via AWS Polly;
+- O áudio deverá ser armazenado em um bucket S3 (que deverá ser público, apenas para a nossa avaliação);
 - Deverá utilizar a lógica de _hash code_ para verificar se a frase já foi gerada anteriormente;
-- Caso o hash (_unique_id_) já exista no dynamoDB entregue o retorno conforme abaixo;
+- Caso o hash (_unique_id_) já exista no DynamoDB entregue o retorno conforme abaixo;
 - Caso não exista, faça a geração do áudio, grave no s3 e grave as referências no dynamoDB.
 
 Resposta a ser entregue:
