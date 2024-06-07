@@ -1,200 +1,64 @@
-# Avaliação Sprints 6 e 7 - Programa de Bolsas Compass UOL e AWS - Março/2024
-Avaliação das sexta e sétima sprints do programa de bolsas Compass UOL para formação em machine learning para AWS.
-## Execução (Código Fonte)
+# Desenvolvimento da aplicação TTS (Text to Speech) com AWS Polly
 
-Crie uma API que irá capturar uma frase qualquer inserida pelo usuário e transformará essa frase em um audio em mp3 via polly.
+## 👨‍💻👩‍💻 Projeto desenvolvido por: [Gabriel Trani](https://github.com/GaTrani), [José Pedro Cândido L.P.](https://github.com/PeterYouseph), [Rafael Torres Nantes](https://github.com/rafael-torres-nantes) e [Sarah Baraldi](https://github.com/mbaraldi-sarah).
 
-**Especificações**:
+## 📚 Contextualização do projeto
 
-A aplicação deverá ser desenvolvida com o framework 'serverless' e deverá seguir a estrutura que já foi desenvolvida neste repo.
+### O projeto consiste em desenvolver uma aplicação que converta texto em áudio, utilizando a tecnologia Text to Speech (TTS) da AWS Polly. A aplicação deve ser capaz de receber um texto, convertê-lo em áudio e disponibilizar o arquivo de áudio gerado em um bucket da AWS S3.
 
-Passo a passo para iniciar o projeto:
+## 🖥️ Funcionamento do sistema
 
-1. Crie a branch para o seu grupo e efetue o clone
+## 🛠️ Tecnologias/Ferramentas utilizadas
 
-2. Instale o framework serverless em seu computador. Mais informações [aqui](https://www.serverless.com/framework/docs/getting-started)
+### Para a implementação do projeto, foram utilizadas as seguintes tecnologias/ferramentas:
 
-```json
-npm install -g serverless
-```
+#### Desenvolvimento da lógica da aplicação (Backend e Frontend):
 
-3. Gere suas credenciais (AWS Acess Key e AWS Secret) na console AWS pelo IAM. Mais informações [aqui](https://www.serverless.com/framework/docs/providers/aws/guide/credentials/)
+##### Ferramentas para o desenvolvimento, versionamento e *deploy* do projeto:
 
-4. Em seguida insira as credenciais e execute o comando conforme exemplo:
+[<img src="https://img.shields.io/badge/Visual_Studio_Code-007ACC?logo=visual-studio-code&logoColor=white">](https://code.visualstudio.com/)
+[<img src="https://img.shields.io/badge/Git-F05032?logo=git&logoColor=white">](https://git-scm.com/)
+[<img src="https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white">](https://github.com/)
+[<img src="https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white">](https://www.docker.com/)
+[<img src="https://img.shields.io/badge/AWS-232F3E?logo=amazon-aws&logoColor=white">](https://aws.amazon.com/pt/)
+[<img src="https://img.shields.io/badge/AWS-CLI-232F3E?logo=amazon-aws&logoColor=white">](https://aws.amazon.com/pt/cli/)
+[<img src="https://img.shields.io/badge/aws_s3-232F3E?logo=amazon-aws&logoColor=white">](https://aws.amazon.com/pt/s3/)
+[<img src="https://img.shields.io/badge/aws_cloudwatch-232F3E?logo=amazon-aws&logoColor=white">](https://aws.amazon.com/pt/cloudwatch/)
+[<img src="https://img.shields.io/badge/aws_dynamodb-232F3E?logo=amazon-aws&logoColor=white">](https://aws.amazon.com/pt/dynamodb/)
+[<img src="https://img.shields.io/badge/aws_polly-232F3E?logo=amazon-aws&logoColor=white">](https://aws.amazon.com/pt/polly/)
 
-```json
-serverless config credentials \
-  --provider aws \
-  --key AKIAIOSFODNN7EXAMPLE \
-  --secret wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-  ```
+##### Organização do Time:
 
-Também é possivel configurar via [aws-cli](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) executando o comando:
+[<img src="https://img.shields.io/badge/Trello-0079BF?logo=trello&logoColor=white">](https://trello.com/)
+[<img src="https://img.shields.io/badge/Teams-6264A7?logo=microsoft-teams&logoColor=white">](https://www.microsoft.com/pt-br/microsoft-teams/group-chat-software)
 
-```json
-$ aws configure
-AWS Access Key ID [None]: AKIAIOSFODNN7EXAMPLE
-AWS Secret Access Key [None]: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-Default region name [None]: us-east-1
-Default output format [None]: ENTER
-  ```
+## 📁 Estrutura do projeto 
 
-#### Observação
+## 📎 Diagrama de atividades da aplicação
+### Fluxo de funcionamento e consumo da API 
 
-As credenciais devem ficar apenas localmente no seu ambiente. Nunca exponha as crendenciais no Readme ou qualquer outro ponto do codigo.
+## 📌 Como executar o projeto
 
-Após executar as instruções acima, o serverless estará pronto para ser utilizado e poderemos publicar a solução na AWS.
-
-5. Para efetuar o deploy da solução na sua conta aws execute (acesse a pasta `api-tts`):
-
-```
-serverless deploy
-```
-
-Depois de efetuar o deploy, vocẽ terá um retorno parecido com isso:
+### Clone o repositório
 
 ```bash
-Deploying api-tts to stage dev (us-east-1)
-
-Service deployed to stack api-tts-dev (85s)
-
-endpoints:
-  GET - https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/
-  GET - https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/v1
-functions:
-  health: api-tts-dev-health (2.1 kB)
-  v1Description: api-tts-dev-v1Description (2.1 kB)
-  v2Description: api-tts-dev-v2Description (2.1 kB)
+$ git clone https://github.com/Compass-pb-aws-2024-MARCO/sprints-6-7-pb-aws-marco.git
 ```
 
-6. Abra o browser e confirme que a solução está funcionando colando os 3 endpoints que deixamos como exemplo:
+### Acesse a pasta do projeto no terminal/cmd:
 
-### Rota 1 → Get /
-
-1. Esta rota já está presente no projeto
-2. O retorno rota é:
-
-```json
-  {
-    "message": "Go Serverless v3.0! Your function executed successfully!",
-    "input": { 
-        ...(event)
-      }
-  }
+```bash
+$ cd sprints-6-7-pb-aws-marco
 ```
 
-3. Status code para sucesso da requisição será `200`
+### Realize um check-out para a branch de desenvolvimento:
 
-### Rota 2 → Get /v1
-
-1. Esta rota já está presente no projeto
-2. O retorno rota é:
-
-```json
-  {
-    "message": "TTS api version 1."
-  }
- 
+```bash
+$ git checkout equipe-9
 ```
 
-3. Status code para sucesso da requisição será `200`
+## 🤯 Dificuldades encontradas 
 
-
-***
-
-Após conseguir rodar o projeto base o objetivo final será divida em duas partes:
-
-## Atividade -> Parte 1
-
-### Rota 3 -> Post /v1/tts
-
-Deverá ser criada a rota `/v1/tts` que receberá um post no formato abaixo:
-
-```json
-  {
-    "phrase": "converta esse texto para áudio e salve uma referencia no dynamoDB. Caso a referencia já exista me devolva a URL com audio já gerado"
-  }
-```
-
-- Deverá ser criada uma lógica para que a frase recebida seja um id único (um _hash code_);
-- Esse hash será o atributo chave em nosso DynamoDB - exemplo: "Teste 123" será sempre o id "123456";
-- O texto da frase recebida deverá ser transformado em áudio via AWS Polly;
-- O áudio deverá ser armazenado em um bucket S3 (que deverá ser público, apenas para a nossa avaliação);
-- Deverá utilizar a lógica de _hash code_ para verificar se a frase já foi gerada anteriormente;
-- Caso o hash (_unique_id_) já exista no DynamoDB entregue o retorno conforme abaixo;
-- Caso não exista, faça a geração do áudio, grave no s3 e grave as referências no dynamoDB.
-
-Resposta a ser entregue:
-
-```json
-  {
-    "received_phrase": "converta esse texto para áudio",
-    "url_to_audio": "https://meu-buckect/audio-xyz.mp3",
-    "created_audio": "02-02-2023 17:00:00",
-    "unique_id": "123456"
-  }
-```
-
-Exemplos de referência:
-
-- <https://github.com/hussainanjar/polly-lambda> (Python)
-- <https://github.com/serverless/examples/tree/v3/aws-python-http-api-with-dynamodb> (Python)
-
-***
-
-## Atividade -> Parte 2
-
-Com base na [Documentação Amazon Lex](https://compasso-my.sharepoint.com/:f:/g/personal/lucas_sousa_compasso_com_br/Eph8d9BDeRhGhBzyoAYRLZUBhfjA54P1-5YHERGaN5_Osg?e=1ibFDI), crie um chatbot utilizando o Amazon Lex V2 e o conecte a uma plataforma de mensageria.
-
-**Especificações**:
-
-- Função do chatbot é de livre escolha do desenvolvedor;
-- Conexões: O chatbot deve ser disponibilizado em uma das seguintes plataformas:  
-  - Slack - [Conexão Slack](https://docs.aws.amazon.com/pt_br/lex/latest/dg/slack-bot-association.html);  
-  - Web - [Web](https://github.com/aws-samples/aws-lex-web-ui);
-- Construção:
-  - Intents:
-    - O chatbot deve possuir ao menos 4 intents distintas;  
-  - Slots:
-    - Captação de informações presentes no texto;
-    - Solicitação de informações quando o slot não for reconhecido;
-    - Confirmação de informações;
-    - O chatbot deve captar ao menos 3 slots no decorrer do fluxo;
-- O chatbot deve utilizar-se de menu com botões (Response Cards);
-- Tratamento de erros (fallback);
-- Deve ter a opção de responder em áudio, transformando-o para texto, com uso da API da Parte 1 deste trabalho;
-- (Opcional) Uso de conditional branching para controle de fluxos ([Doc Conditional Branching](https://docs.aws.amazon.com/pt_br/lexv2/latest/dg/paths-branching.html));
-***
-
-## O que será avaliado?
-
-- Projeto em produção na AWS;
-- Em python conforme projeto base disponibilizado;
-- Infra-estrutura como codigo;
-- Seguir as atividades na ordem proposta;
-- Sobre as rotas:
-  - Possuir a rota com o retorno esperado (somente campos solicitados conforme especificação);
-- Entendimento do chatbot e o que ele soluciona;
-- Criatividade em relação ao tema escolhido para o desenvolvimento do chatbot;
-- Intents e slots criados e informações que eles se dispõem a obter;
-- Organização:  
-  - Estrutura de intenções;  
-  - Estrutura da lógica de negócio;  
-  - Divisão de responsabilidades da equipe;  
-  - Funcionalidade do chatbot;
-- Objetividade do README.md.
-
-***
-
-## Entrega
-
-- **O trabalho deve ser feito em grupos de três ou quatro pessoas**;
-  - Evitar repetições de grupos da sprint anterior;
-- Criar uma branch no repositório com o formato grupo-número (Exemplo: grupo-1);
-- Subir o trabalho na branch com um Readme.md;
-  - Documentar detalhes sobre como a avaliação foi desenvolvida;
-  - Dificuldades conhecidas;
-  - Como utilizar o sistema;
-  - Export do bot Lex em formato .zip;
-  - 🔨 código fonte desenvolvido (Sugestão: pasta `src`)
-  - O prazo de entrega é até às 9h do dia 17/06/2024 no repositório do github (https://github.com/Compass-pb-aws-2024-MARCO/sprints-6-7-pb-aws-marco).
+### Dificuldades técnicas
+-------
+### Dificuldades de organização
