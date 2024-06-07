@@ -1,21 +1,51 @@
 service: api-tts
-frameworkVersion: '3'
 
 provider:
   name: aws
-  runtime: python3.9
+  runtime: python3.10
+  region: us-east-1
+  environment:
+    BUCKET_NAME: your-s3-bucket-name
+    DYNAMODB_TABLE: TTSTable
 
 functions:
   health:
     handler: handler.health
     events:
-      - httpApi:
+      - http:
           path: /
           method: get
+
   v1Description:
     handler: handler.v1_description
     events:
-      - httpApi:
+      - http:
           path: /v1
           method: get
 
+  tts:
+    handler: handler.tts
+    events:
+      - http:
+          path: /v1/tts
+          method: post
+
+resources:
+  Resources:
+    TTSTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: TTSTable
+        AttributeDefinitions:
+          - AttributeName: phraseHash
+            AttributeType: S
+        KeySchema:
+          - AttributeName: phraseHash
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    S3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: your-s3-bucket-name
