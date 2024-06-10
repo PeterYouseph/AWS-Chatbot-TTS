@@ -1,37 +1,21 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
 org: pollyttscompass
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
 service: api-tts
 
 provider:
   name: aws
   runtime: python3.10
   region: us-east-1
-  environment:
-    BUCKET_NAME: ${env:BUCKET_NAME}
-    DYNAMODB_TABLE: ${env:DYNAMODB_TABLE}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
-        - "dynamodb:DescribeTable"
-        - "dynamodb:Query"
-        - "dynamodb:Scan"
-        - "dynamodb:GetItem"
-        - "dynamodb:PutItem"
-        - "dynamodb:UpdateItem"
-        - "dynamodb:DeleteItem"
-      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${env:DYNAMODB_TABLE}"
-    - Effect: "Allow"
-      Action:
-        - "s3:ListBucket"
-        - "s3:GetObject"
-        - "s3:PutObject"
-        - "s3:DeleteObject"
-      Resource:
-        - "arn:aws:s3:::${env:BUCKET_NAME}"
-        - "arn:aws:s3:::${env:BUCKET_NAME}/*"
-    - Effect: "Allow"
-      Action:
-        - "polly:SynthesizeSpeech"
-      Resource: "*"
+        - "dynamodb:*"  # Permissões totais ao DynamoDB
+        - "s3:*"        # Permissões totais ao S3
+      Resource: "*"   
+  environment:
+    BUCKET_NAME: ${env:BUCKET_NAME}
+    DYNAMODB_TABLE: ${env:DYNAMODB_TABLE}
 
 functions:
   health:
