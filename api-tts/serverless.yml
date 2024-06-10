@@ -1,3 +1,4 @@
+org: pollyttscompass
 service: api-tts
 
 provider:
@@ -5,8 +6,32 @@ provider:
   runtime: python3.10
   region: us-east-1
   environment:
-    BUCKET_NAME: your-s3-bucket-name
-    DYNAMODB_TABLE: TTSTable
+    BUCKET_NAME: ${env:BUCKET_NAME}
+    DYNAMODB_TABLE: ${env:DYNAMODB_TABLE}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:DescribeTable"
+        - "dynamodb:Query"
+        - "dynamodb:Scan"
+        - "dynamodb:GetItem"
+        - "dynamodb:PutItem"
+        - "dynamodb:UpdateItem"
+        - "dynamodb:DeleteItem"
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${env:DYNAMODB_TABLE}"
+    - Effect: "Allow"
+      Action:
+        - "s3:ListBucket"
+        - "s3:GetObject"
+        - "s3:PutObject"
+        - "s3:DeleteObject"
+      Resource:
+        - "arn:aws:s3:::${env:BUCKET_NAME}"
+        - "arn:aws:s3:::${env:BUCKET_NAME}/*"
+    - Effect: "Allow"
+      Action:
+        - "polly:SynthesizeSpeech"
+      Resource: "*"
 
 functions:
   health:
@@ -35,12 +60,12 @@ resources:
     TTSTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: TTSTable
+        TableName: ${env:DYNAMODB_TABLE}
         AttributeDefinitions:
-          - AttributeName: phraseHash
+          - AttributeName: id
             AttributeType: S
         KeySchema:
-          - AttributeName: phraseHash
+          - AttributeName: id
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
@@ -48,4 +73,4 @@ resources:
     S3Bucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: your-s3-bucket-name
+        BucketName: ${env:BUCKET_NAME}
