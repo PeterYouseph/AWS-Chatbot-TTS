@@ -1,18 +1,15 @@
-# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+# Arquivo de configuração do Serverless Framework
+
+# Organização cadastrada
 org: pollyttscompass
-# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+# Serviço de API para conversão de texto em fala (TTS) com AWS Polly
 service: api-tts
+frameworkVersion: '3'
 
 provider:
   name: aws
   runtime: python3.10
   region: us-east-1
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - "dynamodb:*"  # Permissões totais ao DynamoDB
-        - "s3:*"        # Permissões totais ao S3
-      Resource: "*"   
   environment:
     BUCKET_NAME: ${env:BUCKET_NAME}
     DYNAMODB_TABLE: ${env:DYNAMODB_TABLE}
