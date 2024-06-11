@@ -11,11 +11,11 @@ class TTSClass:
         self.output_file = "output.mp3"
     # Método para criar a sessão do Polly (Text-to-Speech)
     def create_session(self):
-        ACCESS_KEY, SECRET_KEY = aws_credentials()
+        ACCESS_KEY, SECRET_KEY, SESSION_TOKEN = aws_credentials()
         session = boto3.Session(
             aws_access_key_id=ACCESS_KEY, 
             aws_secret_access_key=SECRET_KEY,
-            # aws_session_token=SESSION_TOKEN
+            aws_session_token=SESSION_TOKEN
         )
         return session
     # Método para converter o texto em fala e salvar o arquivo mp3
