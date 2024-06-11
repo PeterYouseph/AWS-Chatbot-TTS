@@ -5,6 +5,7 @@ from services.logsDynamodb import DynamoDBClass
 from services.s3BucketService import S3BucketClass
 from services.textToSpeech import TTSClass
 from controller.controller import load_services, run_tts
+from dotenv import load_dotenv
 
 def health(event, context):
     return {
