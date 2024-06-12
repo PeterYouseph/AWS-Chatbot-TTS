@@ -1,12 +1,13 @@
 import json
 import hashlib
 from datetime import datetime
-from services.logsDynamodb import DynamoDBClass
+from services.logsDynamoDBService import DynamoDBClass
 from services.s3BucketService import S3BucketClass
-from services.textToSpeech import TTSClass
+from services.textToSpeechService import TTSClass
 from controller.controller import load_services, run_tts
 from dotenv import load_dotenv
 
+# Function responsável por verificar a saúde da API
 def health(event, context):
     return {
         "statusCode": 200,
@@ -16,6 +17,7 @@ def health(event, context):
         }),
     }
 
+# Function responsável por retornar a descrição da API na versão 1
 def v1_description(event, context):
     return {
         "statusCode": 200,
@@ -24,19 +26,20 @@ def v1_description(event, context):
         }),
     }
 
+# Function responsável por receber a frase e retornar o áudio gerado pelo Polly e salvo no S3
 def tts(event, context):
-    print("Event received:", event)  # Print the event to debug the structure
-    try:
+    print("Event received:", event)  # Evento recebido pelo Lambda
+    try: # Tenta obter a frase do corpo do evento recebido
         body = json.loads(event['body'])
         phrase = body['phrase']
-    except KeyError:
+    except KeyError: # Caso a chave 'body' não seja encontrada no evento, retorna um erro
         return {
             "statusCode": 400,
             "body": json.dumps({
                 "message": "Invalid input, 'body' key not found in the event."
             }),
         }
-    except json.JSONDecodeError:
+    except json.JSONDecodeError: # Caso o JSON esteja em um formato inválido, retorna um erro
         return {
             "statusCode": 400,
             "body": json.dumps({
@@ -44,12 +47,12 @@ def tts(event, context):
             }),
         }
 
-    # Generate a unique ID for the phrase using a hash
+    # Gerar um ID único para a frase recebida e o arquivo de áudio gerado
     unique_id = hashlib.md5(phrase.encode()).hexdigest()
 
     logDynamo, s3Bucket, tts = load_services()
 
-    # Check if the phrase already exists in DynamoDB
+    # Certifica-se de que a frase não foi convertida anteriormente e retorna o áudio gerado caso já tenha sido convertida
     if logDynamo.repeated_value_dynamodb(unique_id):
         item = logDynamo.get_item(unique_id)
         return {
@@ -62,15 +65,15 @@ def tts(event, context):
             }),
         }
 
-    # Run TTS to generate the audio
+    # Converte a frase em áudio
     run_tts(tts, phrase)
 
-    # Upload the audio file to S3
+    # Realiza o upload do arquivo de áudio gerado no S3
     audio_file = tts.output_file
     audio_filename = f"{unique_id}.mp3"
     s3_url = s3Bucket.upload_s3_bucket(audio_file, audio_filename)
 
-    # Register the log in DynamoDB
+    # Registra a conversão da frase no DynamoDB
     logDynamo.log_register_dynamodb(unique_id, phrase, s3_url)
 
     return {
