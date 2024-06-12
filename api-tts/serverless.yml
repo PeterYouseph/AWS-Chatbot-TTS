@@ -6,6 +6,16 @@ org: pollyttscompass
 service: api-tts
 frameworkVersion: '3'
 
+plugins:
+  - serverless-python-requirements
+  - serverless-dotenv-plugin
+	
+useDotenv: true
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+
 provider:
   name: aws
   runtime: python3.10
@@ -13,6 +23,29 @@ provider:
   environment:
     BUCKET_NAME: ${env:BUCKET_NAME}
     DYNAMODB_TABLE: ${env:DYNAMODB_TABLE}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:ListTables
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:CreateTable
+            - dynamodb:DescribeTable
+            - dynamodb:UpdateTable
+          Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${env:DYNAMODB_TABLE}
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:CreateBucket
+            - s3:HeadBucket
+          Resource: arn:aws:s3:::${env:BUCKET_NAME}/*
+        - Effect: Allow
+          Action:
+            - polly:SynthesizeSpeech
+          Resource: "*"
 
 functions:
   health:
