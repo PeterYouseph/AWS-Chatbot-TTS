@@ -1,0 +1,1 @@
+{"name":"OpcaoBebida","identifier":"A4QVDALIOY","description":null,"slotTypeValues":[{"synonyms":[{"value":"s"},{"value":"sim"}],"sampleValue":{"value":"sim"}},{"synonyms":[{"value":"n"},{"value":"nao"}],"sampleValue":{"value":"nao"}}],"parentSlotTypeSignature":null,"valueSelectionSetting":{"resolutionStrategy":"TOP_RESOLUTION","regexFilter":null}}
