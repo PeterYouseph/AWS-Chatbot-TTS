@@ -34,17 +34,19 @@ class DynamoDBClass:
 
     # Método para inserir os logs no DynamoDB com os dados da frase convertida
     def log_register_dynamodb(self, unique_id, phrase, s3_url):
-        table = self.dynamodb.Table(self.dynamodb_table_name) 
+        table = self.dynamodb.Table(self.dynamodb_table_name)
         log_item = {
             'id': unique_id,
             'timestamp': datetime.utcnow().isoformat(),
             'phrase': phrase,
-            'url_to_audio': s3_url
+            'url_to_audio': s3_url,
+            'created_audio': datetime.utcnow().isoformat()
         }
-        try: # Insere os dados no DynamoDB
+        try:  # Insere os dados no DynamoDB
             table.put_item(Item=log_item)
-        except ClientError as e: # Caso ocorra um erro, imprime a mensagem de erro
+        except ClientError as e:  # Caso ocorra um erro, imprime a mensagem de erro
             print(f"Erro ao inserir os dados do log no DynamoDB: {e}")
+
 
     # Método para verificar se a frase já foi convertida
     def repeated_value_dynamodb(self, unique_id):
