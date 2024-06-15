@@ -13,13 +13,22 @@ class TTSClass:
             response = self.polly_client.synthesize_speech(
                 Text=text,
                 OutputFormat='mp3',
-                VoiceId='Joanna'
+                VoiceId='Camila'
             )
             with open(self.output_file, 'wb') as file: # Salva o arquivo no diretório /tmp
                 file.write(response['AudioStream'].read())
         except (BotoCoreError, ClientError) as error: # Caso ocorra um erro, imprime a mensagem de erro do Polly
-            print(f"Error: {error}")
+            logging.error(f"Erro ao converter texto em fala: {e}")
+            self.output_file = None
             
     # Método para retornar o arquivo de áudio gerado
     def saveMP3File(self):
-        return self.output_file
+        if not self.output_file:
+            logging.error("Nenhum arquivo de áudio foi gerado para salvar.")
+            return False
+        try:
+            # Adicional lógica de salvamento pode ser adicionada aqui, se necessário
+            return True
+        except Exception as e:
+            logging.error(f"Erro ao salvar o arquivo MP3: {e}")
+            return False
