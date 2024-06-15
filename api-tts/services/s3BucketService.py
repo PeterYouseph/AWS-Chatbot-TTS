@@ -16,7 +16,7 @@ class S3BucketClass:
                 return True
             self.s3_client.create_bucket(Bucket=self.bucket_name)
         except ClientError as e: # Caso ocorra um erro, imprime a mensagem de erro
-            logging.error(e)
+            logging.error(f"Erro ao criar o bucket: {e}")
             return False
         return True
 
@@ -35,5 +35,5 @@ class S3BucketClass:
             file_url = f"https://{self.bucket_name}.s3.amazonaws.com/{filename}"
             return file_url
         except ClientError as e: # Caso ocorra um erro, imprime a mensagem de erro
-            logging.error(e)
+            logging.error(f"Erro ao fazer upload do arquivo: {e}")
             return None
