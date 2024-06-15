@@ -7,7 +7,7 @@ from services.textToSpeechService import TTSClass
 from controller.controller import load_services, run_tts
 from dotenv import load_dotenv
 
-# Function responsável por verificar a saúde da API
+# Função responsável por verificar a saúde da API
 def health(event, context):
     return {
         "statusCode": 200,
@@ -17,7 +17,7 @@ def health(event, context):
         }),
     }
 
-# Function responsável por retornar a descrição da API na versão 1
+# Função responsável por retornar a descrição da API na versão 1
 def v1_description(event, context):
     return {
         "statusCode": 200,
@@ -26,7 +26,7 @@ def v1_description(event, context):
         }),
     }
 
-# Function responsável por receber a frase e retornar o áudio gerado pelo Polly e salvo no S3
+# Função responsável por receber a frase e retornar o áudio gerado pelo Polly e salvo no S3
 def tts(event, context):
     print("Event received:", event)  # Evento recebido pelo Lambda
     try: # Tenta obter a frase do corpo do evento recebido
