@@ -4,9 +4,9 @@
 
 ## 📚 Contextualização do projeto
 
-#### O projeto consiste em desenvolver uma aplicação que converta texto em áudio, utilizando a tecnologia *Text to Speech* (TTS) da AWS Polly. A aplicação deve ser capaz de receber um texto, convertê-lo em áudio e disponibilizar o arquivo de áudio gerado em um *bucket* da AWS S3.
+#### O projeto consiste em desenvolver uma aplicação que converta texto em áudio, utilizando a tecnologia *Text to Speech* (TTS) da Amazon Polly. A aplicação deve ser capaz de receber um texto, convertê-lo em áudio e disponibilizar o arquivo de áudio gerado em um *bucket* da AWS S3.
 
-#### Além disso, compreende a criação de um *chatbot* utilizando a ferramenta da AWS LEX e sua integração com a aplicação TTS citada anteriormente.
+#### Além disso, compreende a criação de um *chatbot* utilizando a ferramenta da Amazon LEX e sua integração com a aplicação TTS citada anteriormente.
 
 ## 🖥️ Funcionamento do sistema
 
@@ -31,7 +31,7 @@ log_item = {
 }
 ```
 
-3. Caso a frase não tenha sido tranformada em .mp3, utilizanos o **AWS Polly** para fazê-lo;
+3. Caso a frase não tenha sido tranformada em .mp3, utilizanos o **Amazon Polly** para fazê-lo;
 
 4. Armazenamos o o áudio em um *bucket* S3 e inserimos um *log* no DynamoDB, no padrão do citado no item 2;
 
@@ -45,14 +45,13 @@ A relação entre os *intents* e seus *slots* está descrita na tabela abaixo:
 
 | Intent                 | Slots                                      |
 |------------------------|-------------------------|
-| escolher-pizza         | sabor1, sabor2, tamanhoPizza, tipoPizza                    |
-| escolher-bebida        | endereco, opcaoBebida, saborBebida, tamanhoBebida                 |
 | saudacao               | nome                                       |
+| escolher-pizza         | sabor1, sabor2, tamanhoPizza, tipoPizza                    |
+| escolher-bebida        | opcaoBebida, saborBebida, tamanhoBebida                 |
+| confirmar-pedido       | confirmarPedido, endereco                 |
 | sobre                  | --                                         |
-| converter-frase        | --              |
 | FallbackIntent         | --              |
 | NewIntent              | --              |
-| --                     | ConfirmarPedido |
 
 Sendo assim, o fluxo de conversa do *chatbot* se dá por:
 
@@ -66,6 +65,8 @@ Sendo assim, o fluxo de conversa do *chatbot* se dá por:
     - Caso negativo, apenas segue para o passo 4.
 5. **Endereço** -> onde coleta o **endereço** do cliente.
 6. **Confirmação** -> onde o cliente pode ou não **cancelar** o pedido.
+
+<!-- - Para todos os casos há opção para que as frases do bot sejam reproduzidas em áudio. Basta mandar no chat a mensagem "Frase". -->
 
 ### Parte 3 - API (Integração)
 
@@ -111,7 +112,7 @@ Em resumo, o fluxo da aplicação se dá da seguinte forma:
 
 - ***controller →*** Realiza a chamada dos *services* (em ./services) criados para gerenciar os serviços AWS, sendo *bucket* na S3, banco de dados no DynamoDB e conversão de texto para áudio no Polly.
 
-- ***services →*** Manipulam os serviços AWS criando tabelas e *buckets*, inserindo e alterando dados, convertendo texto para áudio utilizando Polly.
+- ***services →*** Manipulam os serviços AWS criando tabelas e *buckets*, inserindo e alterando dados, convertendo texto para áudio utilizando Amazon Polly.
 
 - ***bot-pizzaria-aws-LexJson →*** Contém as configurações usadas no *chatbot* criado no LEX.
 
@@ -146,8 +147,124 @@ $ cd sprints-6-7-pb-aws-marco
 $ git checkout equipe-9
 ```
 
+### Cerfitique-se ue tem o serverless instalado:
+
+```bash
+$ serverless
+```
+
+### Caso não estiver, instale poe meio do comando:
+
+```bash
+$ npm install -g serverless
+```
+
+### Instale os plugins do serverless:
+
+```bash
+$ npm install serverless-python-requirements serverless-dotenv-plugin
+```
+
+### Configure as credenciais da aws:
+
+```bash
+$ aws configure
+```
+
+### Faça login no serverless:
+
+```bash
+$ serverless login
+```
+
+### Faça deploy dos lambdas na aws:
+
+```bash
+$ serverless deploy
+```
+
+### Utilizando o Amazon LEX:
+
+1. Abra o Amazon LEX da aws. 
+2. Em **bots**, clique em **Actions** e importe a pasta **bot-pizzaria-aws-LexJson**, em seguida clique **build**.
+
+No Lambda da AWS, crie um arquivo lambda com o
+```bash
+import json
+import requests
+
+def lambda_handler(event, context):
+    print("Received event: " + json.dumps(event))
+    
+    # Obtém a frase do slot "Phrase"
+    phrase = event['currentIntent']['slots'].get('PhraseSlot-Saudacao')
+    print("Frase TTS: " + str(phrase))
+    
+    # Se a frase não for encontrada, retorna uma mensagem apropriada
+    if phrase is None:
+        response = {
+            "dialogAction": {
+                "type": "Close",
+                "fulfillmentState": "Failed",
+                "message": {
+                    "contentType": "PlainText",
+                    "content": "Desculpe, não consegui encontrar a frase na sua solicitação."
+                }
+            }
+        }
+        print("Response: " + json.dumps(response))
+        return response
+
+    # Define a URL da API
+    api_url = "https://k84x0cd1xf.execute-api.us-east-1.amazonaws.com/dev/v1/tts"
+    try:
+        # Define os cabeçalhos da requisição
+        headers = {"Content-Type": "application/json"}
+        
+        # Faz a requisição POST para a API com os dados corretos
+        response = requests.post(api_url, headers=headers, json={"phrase": phrase})
+        print("HTTP Response Status Code: " + str(response.status_code))
+        print("HTTP Response Text: " + response.text)
+
+        if response.status_code == 200:
+            data = response.json()
+            audio_url = data.get('url_to_audio')
+            if audio_url:
+                message = f"Aqui está o áudio da sua mensagem: {audio_url}"
+            else:
+                message = "Desculpe, não consegui obter o URL do áudio."
+        else:
+            message = f"Desculpe, ocorreu um erro na solicitação. Status code: {response.status_code}"
+    
+    except requests.exceptions.RequestException as e:
+        message = f"Erro na requisição HTTP: {str(e)}"
+        print("Exception: " + str(e))
+
+    # Retorna a resposta final para o Lex
+    response = {
+        "dialogAction": {
+            "type": "Close",
+            "fulfillmentState": "Fulfilled",
+            "message": {
+                "contentType": "PlainText",
+                "content": message
+            }
+        }
+    }
+    print("Response: " + json.dumps(response))
+    return response
+```
+
+
 ## 🤯 Dificuldades encontradas 
 
 ### Dificuldades técnicas
+
+Durante o desenvolvimento do chatbot, cada alteração no código exigia um tempo excessivo para ser compilada pelo Amazon LEX. Essa lentidão impedia um fluxo de trabalho ágil e eficiente, atrasando o desenvolvimento e a testagem do chatbot.
+
+<!-- Além disso, houve grande dificuldade em fazer a comunicação do chatbot com o TTS. Foi superada fazendo tchiriri tcharara -->
+
 -------
 ### Dificuldades de organização
+
+O término do semestre letivo, com seu acúmulo significativo de atividades acadêmicas, impactou diretamente o andamento do projeto, ocasionando atrasos no desenvolvimento e na resolução de problemas. Essa sobrecarga de compromissos por parte da equipe afetou o cronograma original.
