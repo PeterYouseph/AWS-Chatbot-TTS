@@ -124,9 +124,6 @@ Em resumo, o fluxo da aplicação se dá da seguinte forma:
 
 - ***serverless.yml →*** Contém uma sintaxe simplificada para implantar infraestrutura AWS Lambda. Define as políticas IAM e as requisições que serão usadas no *handler.py*.
 
-## 📎 Diagrama de atividades da aplicação
-### Fluxo de funcionamento e consumo da API 
-
 ## 📌 Como executar o projeto
 
 ### Clone o repositório
